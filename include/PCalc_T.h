@@ -2,6 +2,8 @@
 #define PCALC_T_H
 
 #include "PCalc.h"
+#include <vector>
+#include <thread>
 
 // Your implementation of PCalc_T class should go here. 
 // Make sure your constructor takes in two parameters:
@@ -22,6 +24,8 @@ class PCalc_T : public PCalc
         // Overload me!
         void markNonPrimes();
 
+        void threadFunction(int i, int threadID);
+
         //void printPrimes(const char *filename);
 
         // Retrieve the prime boolean element at x
@@ -29,6 +33,8 @@ class PCalc_T : public PCalc
         //bool &at(unsigned int x);
 
         //unsigned int array_size() { return asize; };
+        unsigned int num_threads() { return numthreads; };
+        int minValWorking();
 
         // if you overload, don't forget to call me
         //virtual void cleanup();
@@ -45,7 +51,9 @@ class PCalc_T : public PCalc
         // Stuff to be left alone
         //unsigned int asize;
         //bool *primelist;
-        unsigned int num_threads;
+        unsigned int numthreads;
+        std::vector<std::thread> threadList; 
+        std::vector<int> threadProgress;  //thread updates number it is currently processing
 };
 
 #endif
