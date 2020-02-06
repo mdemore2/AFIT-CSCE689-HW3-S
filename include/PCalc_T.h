@@ -36,6 +36,7 @@ class PCalc_T : public PCalc
         unsigned int num_threads() { return numthreads; };
         int minValWorking();
         int threadAvailable();
+        void finishThreads();
 
         // if you overload, don't forget to call me
         //virtual void cleanup();

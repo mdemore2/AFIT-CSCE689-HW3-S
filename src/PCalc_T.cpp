@@ -27,7 +27,7 @@ void PCalc_T::markNonPrimes()
     this->at(0) = false;
     this->at(1) = false;
 
-    threads = std::vector<std::thread>(numthreads);
+    //threads = std::vector<std::thread>(numthreads);
     threadProgress = std::vector<int>(numthreads,INFINITY); //thread updates number it is currently processing
     threadRunning = std::vector<bool>(numthreads,false);
     newThreadVals = std::vector<int>(numthreads);
@@ -99,6 +99,10 @@ void PCalc_T::markNonPrimes()
 
     mainDone = true;
 
+    /*auto f = [=](){finishThreads();};
+    std::thread newThread(f);
+    newThread.detach();*/
+
     for(int i = 0; i < threads.size(); i++)
     {
         
@@ -115,23 +119,21 @@ void PCalc_T::markNonPrimes()
 
 void PCalc_T::threadFunction(int i, int threadID)
 {
-    //if(i < sqrt(this->array_size()))
     
-        //if(this->at(i))
-        
-            int num = pow(i,2);
-            while(num < this->array_size())
-            {
-                //markfalse at num position
-                this->at(num) = false;
-                num += i;
-                threadProgress[threadID] = num;
-            }
+    int num = pow(i,2);
+    while(num < this->array_size())
+    {
+        //markfalse at num position
+        this->at(num) = false;
+        num += i;
+        threadProgress[threadID] = num;
+    }
         
     
 
     threadRunning[threadID] = false;
     threadProgress[threadID] = INFINITY;
+
     while(newThreadVals.at(threadID) == i){
         if(mainDone)
         {
@@ -141,7 +143,8 @@ void PCalc_T::threadFunction(int i, int threadID)
     //std::cout<<"recieved new val";
     if(!mainDone){
         //std::cout<<"newvalrecieved/n";
-        threadFunction(newThreadVals.at(threadID),threadID);}
+        threadFunction(newThreadVals.at(threadID),threadID);
+    }
     
 
 }
@@ -177,4 +180,18 @@ int PCalc_T::threadAvailable()
     }
     return -1;
 
+}
+
+void PCalc_T::finishThreads()
+{
+    for(int i = 0; i < threads.size(); i++)
+    {
+        
+        if(threads.at(i).joinable())
+        {
+            std::cout <<"Waiting for thread " << i <<" to complete\n";
+            threads.at(i).join();
+        }
+        
+    }
 }
