@@ -28,9 +28,12 @@ void PCalc_T::markNonPrimes()
     this->at(1) = false;
 
     threads = std::vector<std::thread>(numthreads);
-    threadProgress = std::vector<int>(numthreads,3); //thread updates number it is currently processing
+    threadProgress = std::vector<int>(numthreads,INFINITY); //thread updates number it is currently processing
     threadRunning = std::vector<bool>(numthreads,false);
+    newThreadVals = std::vector<int>(numthreads);
 
+    bool threadsAssigned = false;
+    int threadID = -1;
 
     //std::vector<std::thread>::iterator itThreads = threads.begin();
     //std::vector<int>::iterator itThreadProgress = threadProgress.begin();
@@ -45,41 +48,56 @@ void PCalc_T::markNonPrimes()
             while(i >= minValWorking()){}
 
             //std::cout<<"waiting for thread\n";
-            while(!threadAvailable()){}
+            while(threadID<0){threadID = threadAvailable();}
             //if no thread available, wait
             //std::cout<<"no longer waiting\n";
 
-            for(int threadID = 0; threadID < numthreads; threadID++)
+            if(!threadsAssigned)
             {
-                //otherwise a thread is open, give value to thread
-                for(int i = 0; i < threads.size(); i++)
-                {
-        
-                    if(threads.at(i).joinable())
-                    {
-                        //std::cout <<"Waiting for thread " << i <<" to complete\n";
-                        threads.at(i).join();
-            
-                    }
-        
-                }
-        
-                if(!threadRunning.at(threadID))
-                {
-                    auto f = [this](int i, int threadID){threadFunction(i,threadID);};
-                    //auto future = std::async([this](int i, int threadID){threadFunction(i,threadID);},i,threadID);
-                    std::thread newThread(f, i,threadID);
-                    threads.push_back(std::move(newThread));
-                    threadRunning[threadID] = true;
-                    threadProgress[threadID] = i;
-                }
 
+                //std::cout <<"making new thread\n";
+                auto f = [this](int i, int threadID){threadFunction(i,threadID);};
+                //auto future = std::async([this](int i, int threadID){threadFunction(i,threadID);},i,threadID);
+                std::thread newThread(f, i,threadID);
+                threads.push_back(std::move(newThread));
+                threadRunning[threadID] = true;
+                threadProgress[threadID] = i;
+                newThreadVals[threadID] = i;
 
+                threadID++;
+
+                if(threadID == numthreads)
+                {
+                    threadsAssigned = true;
+                    //std::cout << "max threads assigned\n";
+                }
+                    
+
+            }
+            else
+            {   
+                //while(!threadAvailable()){}
+
+                //std::cout<<"assigning new value\n";
+                //for(int threadIT = 0; threadIT < numthreads; threadIT++)
+                
+                    //if(!threadRunning.at(threadIT))
+                    
+                        //std::cout <<"new value assigned";
+                newThreadVals[threadID] = i;
+                threadProgress[threadID] = i;
+                threadRunning[threadID] = true;
+                //std::cout<<"new val assigned\n";
+                    
+                
             }
 
         }
          
     }
+
+    mainDone = true;
+
     for(int i = 0; i < threads.size(); i++)
     {
         
@@ -106,17 +124,24 @@ void PCalc_T::threadFunction(int i, int threadID)
                 //markfalse at num position
                 this->at(num) = false;
                 num += i;
-                threadProgress.at(threadID) = num;
+                threadProgress[threadID] = num;
             }
         }
     }
 
-    threadRunning.at(threadID) = false;
-    threadProgress.at(threadID) = INFINITY;
-    if(threads.at(threadID).joinable())
-    {
-        threads.at(threadID).join();
+    threadRunning[threadID] = false;
+    threadProgress[threadID] = INFINITY;
+    while(newThreadVals.at(threadID) == i){
+        if(mainDone)
+        {
+            i = 0;
+        }
     }
+    //std::cout<<"recieved new val";
+    if(!mainDone){
+        //std::cout<<"newvalrecieved/n";
+        threadFunction(newThreadVals.at(threadID),threadID);}
+    
 
 }
 
@@ -125,7 +150,7 @@ int PCalc_T::minValWorking()
     //std::vector<int>::iterator itThreadProgress = threadProgress.begin();
     int minval = INFINITY,val = 0;
 
-    for(int i = 0; i < threadProgress.size(); i++)
+    for(int i = 0; i < numthreads; i++)
     {
         val = threadProgress.at(i);
         if(val < minval)
@@ -138,17 +163,17 @@ int PCalc_T::minValWorking()
 
 }
 
-bool PCalc_T::threadAvailable()
+int PCalc_T::threadAvailable()
 {
     //std::vector<bool>::iterator itThreadRunning = threadRunning.begin();
 
-    for(int i = 0; i < threadRunning.size(); i++)
+    for(int i = 0; i < numthreads; i++)
     {
         if(!threadRunning.at(i))
         {
-            return true;
+            return i;
         }
     }
-    return false;
+    return -1;
 
 }
