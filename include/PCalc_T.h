@@ -35,6 +35,7 @@ class PCalc_T : public PCalc
         //unsigned int array_size() { return asize; };
         unsigned int num_threads() { return numthreads; };
         int minValWorking();
+        bool threadAvailable();
 
         // if you overload, don't forget to call me
         //virtual void cleanup();
@@ -52,8 +53,10 @@ class PCalc_T : public PCalc
         //unsigned int asize;
         //bool *primelist;
         unsigned int numthreads;
-        std::vector<std::thread> threadList; 
+
+        std::vector<std::thread> threads; 
         std::vector<int> threadProgress;  //thread updates number it is currently processing
+        std::vector<bool> threadRunning;
 };
 
 #endif
