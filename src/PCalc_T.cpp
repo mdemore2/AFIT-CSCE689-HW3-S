@@ -8,6 +8,8 @@
 #include <vector>
 #include <stdio.h>
 #include <iostream>
+#include <future>
+#include <chrono>
 
 PCalc_T::PCalc_T(unsigned int array_size, unsigned int num_threads):PCalc(array_size)
 {
@@ -29,6 +31,7 @@ void PCalc_T::markNonPrimes()
     threadProgress = std::vector<int>(numthreads,3); //thread updates number it is currently processing
     threadRunning = std::vector<bool>(numthreads,false);
 
+
     //std::vector<std::thread>::iterator itThreads = threads.begin();
     //std::vector<int>::iterator itThreadProgress = threadProgress.begin();
 
@@ -38,17 +41,33 @@ void PCalc_T::markNonPrimes()
         if(this->at(i))
         {
             //if current num to be threaded is >= minvalue being processed by any other thread, wait until passed this
+            //std::cout<<"waiting for minval\n";
             while(i >= minValWorking()){}
 
+            //std::cout<<"waiting for thread\n";
             while(!threadAvailable()){}
             //if no thread available, wait
+            //std::cout<<"no longer waiting\n";
 
             for(int threadID = 0; threadID < numthreads; threadID++)
             {
                 //otherwise a thread is open, give value to thread
+                for(int i = 0; i < threads.size(); i++)
+                {
+        
+                    if(threads.at(i).joinable())
+                    {
+                        //std::cout <<"Waiting for thread " << i <<" to complete\n";
+                        threads.at(i).join();
+            
+                    }
+        
+                }
+        
                 if(!threadRunning.at(threadID))
                 {
                     auto f = [this](int i, int threadID){threadFunction(i,threadID);};
+                    //auto future = std::async([this](int i, int threadID){threadFunction(i,threadID);},i,threadID);
                     std::thread newThread(f, i,threadID);
                     threads.push_back(std::move(newThread));
                     threadRunning[threadID] = true;
@@ -66,6 +85,7 @@ void PCalc_T::markNonPrimes()
         
         if(threads.at(i).joinable())
         {
+            //std::cout <<"Waiting for thread " << i <<" to complete\n";
             threads.at(i).join();
         }
         
@@ -92,6 +112,11 @@ void PCalc_T::threadFunction(int i, int threadID)
     }
 
     threadRunning.at(threadID) = false;
+    threadProgress.at(threadID) = INFINITY;
+    if(threads.at(threadID).joinable())
+    {
+        threads.at(threadID).join();
+    }
 
 }
 
