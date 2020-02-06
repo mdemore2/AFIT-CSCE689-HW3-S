@@ -34,6 +34,7 @@ void PCalc_T::markNonPrimes()
 
     bool threadsAssigned = false;
     int threadID = -1;
+    int spawnedThreads = 0;
 
     //std::vector<std::thread>::iterator itThreads = threads.begin();
     //std::vector<int>::iterator itThreadProgress = threadProgress.begin();
@@ -56,7 +57,7 @@ void PCalc_T::markNonPrimes()
             {
 
                 //std::cout <<"making new thread\n";
-                auto f = [this](int i, int threadID){threadFunction(i,threadID);};
+                auto f = [=](int i, int threadID){threadFunction(i,threadID);};
                 //auto future = std::async([this](int i, int threadID){threadFunction(i,threadID);},i,threadID);
                 std::thread newThread(f, i,threadID);
                 threads.push_back(std::move(newThread));
@@ -64,9 +65,9 @@ void PCalc_T::markNonPrimes()
                 threadProgress[threadID] = i;
                 newThreadVals[threadID] = i;
 
-                threadID++;
+                spawnedThreads++;
 
-                if(threadID == numthreads)
+                if(spawnedThreads == numthreads)
                 {
                     threadsAssigned = true;
                     //std::cout << "max threads assigned\n";
@@ -114,10 +115,10 @@ void PCalc_T::markNonPrimes()
 
 void PCalc_T::threadFunction(int i, int threadID)
 {
-    if(i < sqrt(this->array_size()))
-    {
-        if(this->at(i))
-        {
+    //if(i < sqrt(this->array_size()))
+    
+        //if(this->at(i))
+        
             int num = pow(i,2);
             while(num < this->array_size())
             {
@@ -126,8 +127,8 @@ void PCalc_T::threadFunction(int i, int threadID)
                 num += i;
                 threadProgress[threadID] = num;
             }
-        }
-    }
+        
+    
 
     threadRunning[threadID] = false;
     threadProgress[threadID] = INFINITY;
