@@ -13,34 +13,14 @@ class PCalc_SP : public PCalc
 {
     public:
         PCalc_SP(unsigned int array_size);
-        //~PCalc_SP();
-
+   
         // Overload me!
         void markNonPrimes();
 
-        //void printPrimes(const char *filename);
-
-        // Retrieve the prime boolean element at x
-        //bool &operator [] (unsigned int x);
-        //bool &at(unsigned int x);
-
-        //unsigned int array_size() { return asize; };
-
-        // if you overload, don't forget to call me
-        //virtual void cleanup();
-
     protected:
-
-        // Do not forget, your constructor should call this constructor
-        //PCalc(unsigned int array_size);
 
     private:
 
-        //PCalc() {};
-
-        // Stuff to be left alone
-        //unsigned int asize;
-        //bool *primelist;
 };
 
 #endif

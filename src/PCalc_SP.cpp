@@ -6,13 +6,10 @@
 
 PCalc_SP::PCalc_SP(unsigned int array_size):PCalc(array_size)
 {
-    //PCalc::PCalc(array_size);
+ 
 }
-/*
-PCalc_SP::~PCalc_SP()
-{
-    PCalc::~PCalc();
-}*/
+
+
 
 void PCalc_SP::markNonPrimes()
 {

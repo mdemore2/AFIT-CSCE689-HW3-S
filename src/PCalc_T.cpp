@@ -13,31 +13,24 @@
 
 PCalc_T::PCalc_T(unsigned int array_size, unsigned int num_threads):PCalc(array_size)
 {
-    //PCalc::PCalc(array_size);
     this->numthreads = num_threads;
 }
-/*
-PCalc_SP::~PCalc_SP()
-{
-    PCalc::~PCalc();
-}*/
+
 
 void PCalc_T::markNonPrimes()
 {
     this->at(0) = false;
     this->at(1) = false;
 
-    //threads = std::vector<std::thread>(numthreads);
-    threadProgress = std::vector<unsigned int>(numthreads,INFINITY); //thread updates number it is currently processing
-    threadRunning = std::vector<bool>(numthreads,false);
-    newThreadVals = std::vector<unsigned int>(numthreads);
+    threadProgress = std::vector<unsigned int>(numthreads,UINT32_MAX); //thread updates number it is currently processing
+    threadRunning = std::vector<bool>(numthreads,false); //whether or not thread currently working on calcs
+    newThreadVals = std::vector<unsigned int>(numthreads); //new value for thread to work on
 
     bool threadsAssigned = false;
     int threadID = -1;
     int spawnedThreads = 0;
 
-    //std::vector<std::thread>::iterator itThreads = threads.begin();
-    //std::vector<int>::iterator itThreadProgress = threadProgress.begin();
+
 
 
     for(unsigned int i  = 2; i < sqrt(this->array_size()); i++)
@@ -47,78 +40,57 @@ void PCalc_T::markNonPrimes()
         if(this->at(i))
         {
             //if current num to be threaded is >= minvalue being processed by any other thread, wait until passed this
-            //std::cout<<"waiting for minval\n";
             while(i >= minValWorking()){}
 
-            //std::cout<<"waiting for thread\n";
             while(threadID<0){threadID = threadAvailable();}
             //if no thread available, wait
-            //std::cout<<"no longer waiting\n";
+           
 
             if(!threadsAssigned)
             {
 
-                //std::cout <<"making new thread\n";
                 auto f = [=](int i, int threadID){threadFunction(i,threadID);};
-                //auto future = std::async([this](int i, int threadID){threadFunction(i,threadID);},i,threadID);
-                std::thread newThread(f, i,threadID);
-                threads.push_back(std::move(newThread));
+                //lambda of work to give to thread
+              
                 threadRunning[threadID] = true;
                 threadProgress[threadID] = i;
                 newThreadVals[threadID] = i;
+                //update global vals
+                
+                std::thread newThread(f, i,threadID);
+                threads.push_back(std::move(newThread));
+                //create and store thread
 
+                //track number of threads created
                 spawnedThreads++;
 
                 if(spawnedThreads == numthreads)
                 {
                     threadsAssigned = true;
-                    //std::cout << "max threads assigned\n";
                 }
                     
 
             }
             else
             {   
-                //while(!threadAvailable()){}
-
-                //std::cout<<"assigning new value\n";
-                //for(int threadIT = 0; threadIT < numthreads; threadIT++)
-                
-                    //if(!threadRunning.at(threadIT))
-                    
-                        //std::cout <<"new value assigned";
+                //give new value to thread
                 newThreadVals[threadID] = i;
                 threadProgress[threadID] = i;
                 threadRunning[threadID] = true;
-                //std::cout<<"new val assigned\n";
                     
-                
             }
 
         }
          
     }
 
+    //kill threads
     mainDone = true;
-
-    /*auto f = [=](){finishThreads();};
-    std::thread newThread(f);
-    newThread.detach();*/
-
-    for(int i = 0; i < threads.size(); i++)
-    {
-        
-        if(threads.at(i).joinable())
-        {
-            //std::cout <<"Waiting for thread " << i <<" to complete\n";
-            threads.at(i).join();
-        }
-        
-    }
+    finishThreads();
 
 }
 
-
+//marknonprime function to give to threads
 void PCalc_T::threadFunction(unsigned int i, int threadID)
 {
     
@@ -132,29 +104,29 @@ void PCalc_T::threadFunction(unsigned int i, int threadID)
     }
         
     
-
+    //let main thread know ready for new value
     threadRunning[threadID] = false;
-    threadProgress[threadID] = INFINITY;
+    threadProgress[threadID] = UINT32_MAX;
 
+    //wait for new val from main thread or until program end
     while(newThreadVals.at(threadID) == i){
         if(mainDone)
         {
             i = 0;
         }
     }
-    //std::cout<<"recieved new val";
+
     if(!mainDone){
-        //std::cout<<"newvalrecieved/n";
         threadFunction(newThreadVals.at(threadID),threadID);
     }
     
 
 }
 
+//return lowest number currently being worked on by all threads
 int PCalc_T::minValWorking()
 {
-    //std::vector<int>::iterator itThreadProgress = threadProgress.begin();
-    unsigned int minval = INFINITY,val = 0;
+    unsigned int minval = UINT32_MAX,val = 0;
 
     for(unsigned int i = 0; i < numthreads; i++)
     {
@@ -169,9 +141,9 @@ int PCalc_T::minValWorking()
 
 }
 
+//return which thread is ready for next value
 int PCalc_T::threadAvailable()
 {
-    //std::vector<bool>::iterator itThreadRunning = threadRunning.begin();
 
     for(int i = 0; i < numthreads; i++)
     {
@@ -184,6 +156,8 @@ int PCalc_T::threadAvailable()
 
 }
 
+
+//join all threads once calculation complete
 void PCalc_T::finishThreads()
 {
     for(int i = 0; i < threads.size(); i++)
@@ -191,7 +165,7 @@ void PCalc_T::finishThreads()
         
         if(threads.at(i).joinable())
         {
-            std::cout <<"Waiting for thread " << i <<" to complete\n";
+            //std::cout <<"Waiting for thread " << i <<" to complete\n";
             threads.at(i).join();
         }
         

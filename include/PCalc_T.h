@@ -19,40 +19,22 @@ class PCalc_T : public PCalc
 
         PCalc_T(unsigned int array_size, unsigned int num_threads);
 
-        //virtual ~PCalc();
-
         // Overload me!
         void markNonPrimes();
 
         void threadFunction(unsigned int i, int threadID);
 
-        //void printPrimes(const char *filename);
-
-        // Retrieve the prime boolean element at x
-        //bool &operator [] (unsigned int x);
-        //bool &at(unsigned int x);
-
-        //unsigned int array_size() { return asize; };
         unsigned int num_threads() { return numthreads; };
         int minValWorking();
         int threadAvailable();
         void finishThreads();
 
-        // if you overload, don't forget to call me
-        //virtual void cleanup();
 
     protected:
 
-        // Do not forget, your constructor should call this constructor
-        //PCalc(unsigned int array_size);
-
     private:
 
-        //PCalc() {};
-
-        // Stuff to be left alone
-        //unsigned int asize;
-        //bool *primelist;
+        
         unsigned int numthreads;
 
         std::vector<std::thread> threads; 
