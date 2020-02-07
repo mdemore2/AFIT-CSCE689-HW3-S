@@ -24,7 +24,7 @@ class PCalc_T : public PCalc
         // Overload me!
         void markNonPrimes();
 
-        void threadFunction(int i, int threadID);
+        void threadFunction(unsigned int i, int threadID);
 
         //void printPrimes(const char *filename);
 
@@ -56,9 +56,9 @@ class PCalc_T : public PCalc
         unsigned int numthreads;
 
         std::vector<std::thread> threads; 
-        std::vector<int> threadProgress;  //thread updates number it is currently processing
+        std::vector<unsigned int> threadProgress;  //thread updates number it is currently processing
         std::vector<bool> threadRunning;
-        std::vector<int> newThreadVals;
+        std::vector<unsigned int> newThreadVals;
         bool mainDone = false;
 };
 

@@ -18,12 +18,12 @@ void PCalc_SP::markNonPrimes()
 {
     this->at(0) = false;
     this->at(1) = false;
-    for(int i  = 2; i < sqrt(this->array_size()); i++)
+    for(unsigned int i  = 2; i < sqrt(this->array_size()); i++)
     {
         
         if(this->at(i))
         {
-            int num = pow(i,2);
+            unsigned int num = pow(i,2);
             while(num < this->array_size())
             {
                 //markfalse at num position

@@ -28,9 +28,9 @@ void PCalc_T::markNonPrimes()
     this->at(1) = false;
 
     //threads = std::vector<std::thread>(numthreads);
-    threadProgress = std::vector<int>(numthreads,INFINITY); //thread updates number it is currently processing
+    threadProgress = std::vector<unsigned int>(numthreads,INFINITY); //thread updates number it is currently processing
     threadRunning = std::vector<bool>(numthreads,false);
-    newThreadVals = std::vector<int>(numthreads);
+    newThreadVals = std::vector<unsigned int>(numthreads);
 
     bool threadsAssigned = false;
     int threadID = -1;
@@ -40,8 +40,10 @@ void PCalc_T::markNonPrimes()
     //std::vector<int>::iterator itThreadProgress = threadProgress.begin();
 
 
-    for(int i  = 2; i < sqrt(this->array_size()); i++)
+    for(unsigned int i  = 2; i < sqrt(this->array_size()); i++)
     {
+        
+
         if(this->at(i))
         {
             //if current num to be threaded is >= minvalue being processed by any other thread, wait until passed this
@@ -117,10 +119,10 @@ void PCalc_T::markNonPrimes()
 }
 
 
-void PCalc_T::threadFunction(int i, int threadID)
+void PCalc_T::threadFunction(unsigned int i, int threadID)
 {
     
-    int num = pow(i,2);
+    unsigned int num = pow(i,2);
     while(num < this->array_size())
     {
         //markfalse at num position
@@ -152,9 +154,9 @@ void PCalc_T::threadFunction(int i, int threadID)
 int PCalc_T::minValWorking()
 {
     //std::vector<int>::iterator itThreadProgress = threadProgress.begin();
-    int minval = INFINITY,val = 0;
+    unsigned int minval = INFINITY,val = 0;
 
-    for(int i = 0; i < numthreads; i++)
+    for(unsigned int i = 0; i < numthreads; i++)
     {
         val = threadProgress.at(i);
         if(val < minval)
