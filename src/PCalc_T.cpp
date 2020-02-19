@@ -23,16 +23,16 @@ void PCalc_T::markNonPrimes()
     this->at(0) = false;
     this->at(1) = false;
 
-    /*threadProgress = std::vector<unsigned int>(numthreads,UINT32_MAX); //thread updates number it is currently processing
+    threadProgress = std::vector<unsigned int>(numthreads,UINT32_MAX); //thread updates number it is currently processing
     threadRunning = std::vector<bool>(numthreads,false); //whether or not thread currently working on calcs
     newThreadVals = std::vector<unsigned int>(numthreads); //new value for thread to work on
 
     bool threadsAssigned = false;
     int threadID = -1;
-    int spawnedThreads = 0;*/
+    int spawnedThreads = 0;
 
     //omp_set_num_threads(numthreads);
-    #pragma omp parallel
+    //#pragma omp parallel
     for(unsigned int i  = 2; i < sqrt(this->array_size()); i++)
     {
         
@@ -51,7 +51,7 @@ void PCalc_T::markNonPrimes()
 
 
     //old method commented out below
-    /*for(unsigned int i  = 2; i < sqrt(this->array_size()); i++)
+    for(unsigned int i  = 2; i < sqrt(this->array_size()); i++)
     {
         
 
@@ -104,7 +104,7 @@ void PCalc_T::markNonPrimes()
 
     //kill threads
     mainDone = true;
-    finishThreads();*/
+    finishThreads();
 
 }
 
