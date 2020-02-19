@@ -4,6 +4,7 @@
 #include "PCalc.h"
 #include <vector>
 #include <thread>
+#include <omp.h>
 
 // Your implementation of PCalc_T class should go here. 
 // Make sure your constructor takes in two parameters:

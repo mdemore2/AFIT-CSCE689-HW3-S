@@ -15,6 +15,7 @@
 #include <cmath>
 #include <getopt.h>
 #include <unistd.h>
+#include <omp.h>
 
 #include "PCalc_SP.h"
 #include "PCalc_T.h"

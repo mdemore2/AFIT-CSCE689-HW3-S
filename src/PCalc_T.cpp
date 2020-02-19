@@ -31,9 +31,9 @@ void PCalc_T::markNonPrimes()
     int threadID = -1;
     int spawnedThreads = 0;
 
-    //omp_set_num_threads(numthreads);
-    //#pragma omp parallel
-    /*for(unsigned int i  = 2; i < sqrt(this->array_size()); i++)
+    omp_set_num_threads(numthreads);
+    #pragma omp parallel
+    for(unsigned int i  = 2; i < sqrt(this->array_size()); i++)
     {
         
         if(this->at(i))
@@ -47,11 +47,11 @@ void PCalc_T::markNonPrimes()
             }
         }
         
-    }*/
+    }
 
 
     //old method commented out below
-    for(unsigned int i  = 2; i < sqrt(this->array_size()); i++)
+    /*for(unsigned int i  = 2; i < sqrt(this->array_size()); i++)
     {
         
 
@@ -104,7 +104,7 @@ void PCalc_T::markNonPrimes()
 
     //kill threads
     mainDone = true;
-    finishThreads();
+    finishThreads();*/
 
 }
 
