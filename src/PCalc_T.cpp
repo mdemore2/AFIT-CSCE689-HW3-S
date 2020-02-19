@@ -31,9 +31,28 @@ void PCalc_T::markNonPrimes()
     int spawnedThreads = 0;
 
 
-
-
+    //this->at(0) = false;
+    //this->at(1) = false;
+    #pragma omp parallel
     for(unsigned int i  = 2; i < sqrt(this->array_size()); i++)
+    {
+        
+        if(this->at(i))
+        {
+            unsigned int num = pow(i,2);
+            while(num < this->array_size())
+            {
+                //markfalse at num position
+                this->at(num) = false;
+                num += i;
+            }
+        }
+        
+    }
+
+
+
+    /*for(unsigned int i  = 2; i < sqrt(this->array_size()); i++)
     {
         
 
@@ -86,7 +105,7 @@ void PCalc_T::markNonPrimes()
 
     //kill threads
     mainDone = true;
-    finishThreads();
+    finishThreads();*/
 
 }
 
