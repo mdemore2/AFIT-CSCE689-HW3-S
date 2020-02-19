@@ -51,7 +51,7 @@ void PCalc_T::markNonPrimes()
     }
 
 
-
+    //old method commented out below
     /*for(unsigned int i  = 2; i < sqrt(this->array_size()); i++)
     {
         
