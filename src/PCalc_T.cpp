@@ -33,7 +33,7 @@ void PCalc_T::markNonPrimes()
 
     //omp_set_num_threads(numthreads);
     //#pragma omp parallel
-    for(unsigned int i  = 2; i < sqrt(this->array_size()); i++)
+    /*for(unsigned int i  = 2; i < sqrt(this->array_size()); i++)
     {
         
         if(this->at(i))
@@ -47,7 +47,7 @@ void PCalc_T::markNonPrimes()
             }
         }
         
-    }
+    }*/
 
 
     //old method commented out below
