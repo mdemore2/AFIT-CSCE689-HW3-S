@@ -40,7 +40,7 @@ void displayHelp(const char *execname) {
 int main(int argc, char *argv[]) {
 
 
-   bool use_singlethread = false;
+   bool use_singlethread = true;
    bool use_multithread = true;
    bool write_to_disk = true;
    unsigned int count_to = default_max_range;
