@@ -22,10 +22,10 @@
 using namespace std::chrono;
 
 // Default of how high should we get prime numbers up to:
-const unsigned int default_max_range = 50000;
+const unsigned int default_max_range = 40000000;
 
 // Default maximum number of threads that should be used to calculate
-const unsigned int default_num_threads = 4;
+const unsigned int default_num_threads = 16;
 
 void displayHelp(const char *execname) {
    std::cout << execname << " [-t <num_threads>] [-n <max_range>] [-s] [-m]\n";
@@ -40,7 +40,7 @@ void displayHelp(const char *execname) {
 int main(int argc, char *argv[]) {
 
 
-   bool use_singlethread = true;
+   bool use_singlethread = false;
    bool use_multithread = true;
    bool write_to_disk = true;
    unsigned int count_to = default_max_range;
